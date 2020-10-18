@@ -1,0 +1,100 @@
+<html>
+
+	<body>
+		<div style="max-width: 800px">
+			<h1>Important! How to use DGX-1 GUI</h1>
+			<p>Dear %name%,</p>
+			<p>Your request has been approved.<br>
+				<b>Request Details:</b><br>
+				Task ID: %task_id%<br>
+				Date: %date%<br>
+				Duration: %duration% hours<br>
+				Number of GPUs: %numGPUs%<br>
+				Container: %container% <br>
+
+			</p>
+			<h3>
+				<b>Here you will find a short instruction how to use the system.</b>
+			</h3>
+			<ol>
+				<li><b>The server account is created or allocated to you.</b> <br>
+					You are provided with the access to your account via ssh protocol from 
+					intranet network of UAEU: <em>ssh %server_account%@dgx1-request.aa.uaeu.ac.ae</em>
+					If command is run successfully, you are in the shell of your home folder.
+					<br>
+					<small>NB! All users are created with predefined passwords <em>123456</em>.
+						If your affiliation is not a student, we recommend to change your
+						password on the first access to the server using the command <em>passwd</em>
+					</small> <br>
+					<small>
+						Windows OS users may find short instruction how to install and use  ssh client
+						putty attached herewith.
+					</small>
+
+
+				</li>
+				<li> <b>Data folder</b> <br>
+					In you home directory you will find <em>dgx-data</em> folder (run <em>ls</em> 
+					command in shell to see the structure). This folder is mapped to the DGX1
+					server, therefore, the data you are going to use have to be uploaded into
+					this folder.
+
+
+				</li>
+				<li><b>Task data folder</b> <br>
+					For your convenience, when your request is approved by the system's admin,
+					folder <em>Task_%task_id%</em> is created in <em>dgx-data</em>  directory.
+					This folder will be mounted as working directory to the container, you
+					requested for. Therefore, the data, specific to the task will be stored in
+					the <em>/home/%server_account%/dgx-data/Task_%task_id%/ </em>
+					You can start uploading your data to this folder from your computer. E.g, 
+					for linux users:<br>
+					<em>scp -r path_to_your_data %server_account%@dgx1-request.aa.uaeu.ac.ae:/home/%server_account%/dgx-data/Task_%task_id%/ </em>
+				</li>
+
+				<li><b>Access to the container</b> <br>
+					When the container is run for you, you will be provided with the ssh access
+					to its instance. To get access to the shell inside the requested container,
+					you need to run the command <em>ssh -p %ssh_port% root@localhost</em> from
+					the shell opened on previous step (it will be shell inside the another shell.)
+					Now you can run your python scripts here.
+					<br>
+					The path to the data folder inside the container is <em>%docker_working_dir%</em>
+				</li>
+				<li><b> JUPYTER notebook</b> <br>
+					All containers with supported jupyter notebook on the DGX1 server are built 
+					with jupyter notebook installed and run in the background. If you want to
+					run your models on the DGX1 from your browser using jupyter notebook you
+					will need to forward ports to your computer.
+					<ul>
+						<li><em>ssh %server_account%@dgx1-request.aa.uaeu.ac.ae -L8888:localhost:%jupyter_port% -L6006:localhost:%tensorboard_port%</em>
+							<br>
+							<small>NB! port 8888 corresponds to the jupyter notebook, port
+							6006 is allocated to the tensorboard. If you don't use tensorboard,
+							you don't need to forward 6006 port.</small>
+						</li>
+						<li><em>ssh -p %ssh_port% root@localhost</em></li>
+						<li>In you browser go to the address <em>http://localhost:8888</em></li>
+						<li> In the notebook token field insert token, generated for you: <em>%jupyter_token%</em></li>
+					</ul>
+
+				</li>
+			</ol>
+			<p>
+			<h3>ACKNOWLEDGMENT</h3>
+			                            We would highly appreciate it if you could help us to justify the purchase of DGX1, by  <b> acknowledging AI and Robotics
+							                                    Lab of United Arab Emirates University for offering facilities such as a supercomputer DGX1 on the publication </b> that
+										                                you used the results that came out of DGX1.
+														                            It will help us to buy more computational facilities in the future.
+																	                            </p>
+			<p>
+				Thank you for your cooperation. <br>If you have any queries, please don't hesitate to contact us by responding to this email.
+				<br> 
+			</p>
+			<p>
+			AI and Robotics Lab, UAEU
+			</p>
+		</div>
+	</body>
+
+</html>

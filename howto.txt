@@ -1,0 +1,65 @@
+DGX-LOGIN server
+
+
+
+1. deploy next scripts into /opt/dgx/
+	manager.php
+	create_user_loginserver.sh
+	user_monitor.php
+2. create /opt/dgx/logs folder
+
+3. create cron runner for manager.php with a next content
+	cat /etc/cron.d/dgx-manager
+	*/5 * * * * root [ -x /opt/dgx/manager.php ] && /opt/dgx/manager.php 2>&1 >> /opt/dgx/logs/manager.log
+
+4. create cron runner for user_monitor.php
+	cat /etc/cron.d/dgx-user-monitor
+	*/5 * * * * root sleep 30 && [ -x /opt/dgx/user_monitor.php ] && /opt/dgx/user_monitor.php 2>&1 >> /opt/dgx/logs/user_monitor.log
+
+
+
+
+DGX1 server
+
+1. deploy next script to /home/runner/bin/
+	create_user_dgx.sh
+	user_monitor.sh
+
+2. create cron runner for user_monitor.sh
+	cat /etc/cron.d/dgx-request-preparator
+	*/5 * * * * root if [ -x /home/runner/bin/user_monitor.sh ]; then /home/runner/bin/user_monitor.sh 2>&1 >>/home/runner/logs/user_monitor.log; fi
+
+
+
+
+
+
+
+Operation which is done for creating user and all required structures
+How to create new user on login server
+commands with '#DGX>' prefix should be executed on DGX with in root shell
+
+
+export USER_NAME=new_user_name
+adduser -q ${USER_NAME}
+
+chmod 700 /home/${USER_NAME}
+mkdir -p /home/${USER_NAME}/dgx-data
+mkdir -p /home/${USER_NAME}/.ssh
+chmod 700 /home/${USER_NAME}/.ssh
+ssh-keygen -f /home/${USER_NAME}/.ssh/id_rsa
+chown -R ${USER_NAME}.${USER_NAME} /home/${USER_NAME}/.ssh
+scp /home/${USER_NAME}/.ssh/id_rsa.pub runner@dgx1-host:~/keys/${USER_NAME}.pub
+echo "dgx1-host:/home/runner/shared/${USER_NAME} /home/${USER_NAME}/dgx-data nfs4" >> /etc/fstab
+
+#DGX> export IP_ADDRESS_OF_NFS_SHARE=192.168.0.1
+#DGX> export RUNNER_USER_ID=1001
+#DGX> export USER_NAME=new_user_name
+#DGX> chown root.root /home/runner/keys/${USER_NAME}.pub
+#DGX> chmod 600 /home/runner/keys/${USER_NAME}.pub
+#DGX> mkdir -p /home/runner/shared/${USER_NAME} 
+#DGX> echo "/home/runner/shared/${USER_NAME}      ${IP_ADDRESS_OF_NFS_SHARE}(rw,sync,no_subtree_check,all_squash,anonuid=${RUNNER_USER_ID},anongid=${RUNNER_USER_ID})" >> /etc/exports
+#DGX> exportfs -a
+#DGX> systemctl restart nfs-kernel-server
+
+mount -a
