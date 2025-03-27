@@ -1,4 +1,4 @@
-## DGX System Access and Management Blueprint
+## DGX System Access and Management
 
 **Document Version:** 1.0
 **Date:** October 26, 2023
